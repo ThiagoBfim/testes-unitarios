@@ -1,13 +1,12 @@
 package br.teste.basico.servicos;
 
-import static br.teste.basico.utils.DataUtils.adicionarDias;
-
-import java.util.Date;
-
 import br.teste.basico.entidades.Filme;
 import br.teste.basico.entidades.Locacao;
 import br.teste.basico.entidades.Usuario;
-import br.teste.basico.utils.DataUtils;
+
+import java.util.Date;
+
+import static br.teste.basico.utils.DataUtils.adicionarDias;
 
 public class LocacaoService {
 	

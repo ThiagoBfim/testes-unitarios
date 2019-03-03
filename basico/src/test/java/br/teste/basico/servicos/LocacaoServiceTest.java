@@ -1,8 +1,7 @@
-package br.teste.basico;
+package br.teste.basico.servicos;
 
 import br.teste.basico.entidades.Filme;
 import br.teste.basico.entidades.Locacao;
-import br.teste.basico.servicos.LocacaoService;
 import br.teste.basico.utils.DataUtils;
 import org.junit.Assert;
 import org.junit.Test;
