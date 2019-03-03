@@ -29,6 +29,15 @@ public class LocacaoService {
 		return locacao;
 	}
 
+	/**
+	 * O teste precisa ser FIRST
+	 * Fast				(Menos de 1 segundo)
+	 * Independent		(Não depender de outros testes)
+	 * Repeatable		(Retornar o mesmo resultado indepdentemente de quantas vezes for executado)
+	 * Self-verifying	(O teste precisa se auto avaliar, e informar se houver erro ou não)
+	 * Timely			(Deve ser criada no momento certo.)
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		LocacaoService locacaoService = new LocacaoService();
 		Filme filme = new Filme();
