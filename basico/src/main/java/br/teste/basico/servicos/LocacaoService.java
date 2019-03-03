@@ -15,13 +15,14 @@ public class LocacaoService {
 		locacao.setFilme(filme);
 		locacao.setUsuario(usuario);
 		locacao.setDataLocacao(new Date());
-		locacao.setValor(filme.getPrecoLocacao());
 
 		//Entrega no dia seguinte
 		Date dataEntrega = new Date();
-		dataEntrega = adicionarDias(dataEntrega, 1);
+		int diasAluguel = 1;
+		dataEntrega = adicionarDias(dataEntrega, diasAluguel);
 		locacao.setDataRetorno(dataEntrega);
-		
+		locacao.setValor(filme.getPrecoLocacao() * diasAluguel);
+
 		//Salvando a locacao...	
 		//TODO adicionar método para salvar
 		
