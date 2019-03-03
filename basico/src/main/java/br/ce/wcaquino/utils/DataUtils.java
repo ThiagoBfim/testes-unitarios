@@ -60,7 +60,7 @@ public class DataUtils {
 	 * @param data2
 	 * @return
 	 */
-	public static boolean isMesmaData(Date data1, Date data2) {
+	public static boolean isMesmaDataSimples(Date data1, Date data2) {
 		Calendar calendar1 = Calendar.getInstance();
 		calendar1.setTime(data1);
 		Calendar calendar2 = Calendar.getInstance();
