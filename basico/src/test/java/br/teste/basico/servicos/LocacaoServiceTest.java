@@ -2,7 +2,10 @@ package br.teste.basico.servicos;
 
 import br.teste.basico.entidades.Filme;
 import br.teste.basico.entidades.Locacao;
+import br.teste.basico.entidades.Usuario;
 import br.teste.basico.exceptions.FaltaEstoqueException;
+import br.teste.basico.exceptions.LocadoraException;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Date;
@@ -27,7 +30,7 @@ public class LocacaoServiceTest {
     public void testarDataLocacao() {
         LocacaoService locacaoService = new LocacaoService();
         Filme filme = createFilmeBatman();
-        Locacao locacao = locacaoService.alugarFilme(null, filme);
+        Locacao locacao = locacaoService.alugarFilme(new Usuario("jose"), filme);
         assertTrue(isMesmaDataSimples(locacao.getDataRetorno(), adicionarDias(new Date(), 1)));
         assertTrue(isMesmaDataSimples(locacao.getDataLocacao(), new Date()));
     }
@@ -37,14 +40,37 @@ public class LocacaoServiceTest {
         LocacaoService locacaoService = new LocacaoService();
         Filme filme = createFilmeBatman();
         filme.setEstoque(0);
-        locacaoService.alugarFilme(null, filme);
+        locacaoService.alugarFilme(new Usuario("jose"), filme);
+    }
+
+    @Test
+    public void testarLocacaoSemFilme() {
+        LocacaoService locacaoService = new LocacaoService();
+        try {
+            locacaoService.alugarFilme(new Usuario("jose"),  null);
+            Assert.fail("É esperado exception quando não houver filme.");
+        } catch (LocadoraException e){
+            assertThat(e.getMessage(), is("Filme vazio"));
+        }
+    }
+
+    @Test
+    public void testarLocacaoSemAutor() {
+        LocacaoService locacaoService = new LocacaoService();
+        Filme filme = createFilmeBatman();
+        try {
+            locacaoService.alugarFilme(null, filme);
+            Assert.fail("É esperado exception quando não houver autor.");
+        } catch (LocadoraException e){
+            assertThat(e.getMessage(), is("Usuário vazio"));
+        }
     }
 
     @Test
     public void testarValorLocacao() {
         LocacaoService locacaoService = new LocacaoService();
         Filme filme = createFilmeBatman();
-        Locacao locacao = locacaoService.alugarFilme(null, filme);
+        Locacao locacao = locacaoService.alugarFilme(new Usuario("jose"), filme);
         assertEquals(locacao.getValor(), filme.getPrecoLocacao());
         assertThat(locacao.getValor(), org.hamcrest.CoreMatchers.is(10.50));
         assertThat(locacao.getValor(), is(not(10.501)));

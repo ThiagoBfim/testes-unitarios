@@ -4,6 +4,7 @@ import br.teste.basico.entidades.Filme;
 import br.teste.basico.entidades.Locacao;
 import br.teste.basico.entidades.Usuario;
 import br.teste.basico.exceptions.FaltaEstoqueException;
+import br.teste.basico.exceptions.LocadoraException;
 
 import java.util.Date;
 
@@ -13,7 +14,9 @@ public class LocacaoService {
 
     public Locacao alugarFilme(Usuario usuario, Filme filme) {
 
-        validarEstoque(filme);
+        validarUsuario(usuario);
+        validarFilme(filme);
+
         Locacao locacao = new Locacao();
         locacao.setFilme(filme);
         locacao.setUsuario(usuario);
@@ -30,6 +33,19 @@ public class LocacaoService {
         //TODO adicionar método para salvar
 
         return locacao;
+    }
+
+    private void validarUsuario(Usuario usuario) {
+        if (usuario == null) {
+            throw new LocadoraException("Usuário vazio");
+        }
+    }
+
+    private void validarFilme(Filme filme) {
+        if (filme == null) {
+            throw new LocadoraException("Filme vazio");
+        }
+        validarEstoque(filme);
     }
 
     private void validarEstoque(Filme filme) {
