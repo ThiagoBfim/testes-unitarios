@@ -6,6 +6,7 @@ import br.teste.basico.entidades.Usuario;
 import br.teste.basico.exceptions.FaltaEstoqueException;
 import br.teste.basico.exceptions.LocadoraException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Date;
@@ -18,6 +19,9 @@ import static org.junit.Assert.*;
 
 public class LocacaoServiceTest {
 
+    private LocacaoService locacaoService;
+    private Filme filme;
+
     /**
      * O teste precisa ser FIRST
      * Fast				        (Menos de 1 segundo)
@@ -26,10 +30,14 @@ public class LocacaoServiceTest {
      * Self-verifying	        (O teste precisa se auto avaliar, e informar se houver erro ou não)
      * Timely			        (Deve ser criada no momento certo.)
      */
+    @Before
+    public void setUp() {
+        locacaoService = new LocacaoService();
+        filme = createFilmeBatman();
+    }
+
     @Test
     public void testarDataLocacao() {
-        LocacaoService locacaoService = new LocacaoService();
-        Filme filme = createFilmeBatman();
         Locacao locacao = locacaoService.alugarFilme(new Usuario("jose"), filme);
         assertTrue(isMesmaDataSimples(locacao.getDataRetorno(), adicionarDias(new Date(), 1)));
         assertTrue(isMesmaDataSimples(locacao.getDataLocacao(), new Date()));
@@ -37,39 +45,32 @@ public class LocacaoServiceTest {
 
     @Test(expected = FaltaEstoqueException.class)
     public void testarSemEstoqueLocacao() {
-        LocacaoService locacaoService = new LocacaoService();
-        Filme filme = createFilmeBatman();
         filme.setEstoque(0);
         locacaoService.alugarFilme(new Usuario("jose"), filme);
     }
 
     @Test
     public void testarLocacaoSemFilme() {
-        LocacaoService locacaoService = new LocacaoService();
         try {
-            locacaoService.alugarFilme(new Usuario("jose"),  null);
+            locacaoService.alugarFilme(new Usuario("jose"), null);
             Assert.fail("É esperado exception quando não houver filme.");
-        } catch (LocadoraException e){
+        } catch (LocadoraException e) {
             assertThat(e.getMessage(), is("Filme vazio"));
         }
     }
 
     @Test
     public void testarLocacaoSemAutor() {
-        LocacaoService locacaoService = new LocacaoService();
-        Filme filme = createFilmeBatman();
         try {
             locacaoService.alugarFilme(null, filme);
             Assert.fail("É esperado exception quando não houver autor.");
-        } catch (LocadoraException e){
+        } catch (LocadoraException e) {
             assertThat(e.getMessage(), is("Usuário vazio"));
         }
     }
 
     @Test
     public void testarValorLocacao() {
-        LocacaoService locacaoService = new LocacaoService();
-        Filme filme = createFilmeBatman();
         Locacao locacao = locacaoService.alugarFilme(new Usuario("jose"), filme);
         assertEquals(locacao.getValor(), filme.getPrecoLocacao());
         assertThat(locacao.getValor(), org.hamcrest.CoreMatchers.is(10.50));
