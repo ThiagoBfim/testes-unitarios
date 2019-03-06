@@ -6,19 +6,25 @@ import br.teste.basico.entidades.Usuario;
 import br.teste.basico.exceptions.FaltaEstoqueException;
 import br.teste.basico.exceptions.LocadoraException;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import static br.teste.basico.utils.DataUtils.adicionarDias;
 
 public class LocacaoService {
 
     public Locacao alugarFilme(Usuario usuario, Filme filme) {
+        return alugarFilmes(usuario, Collections.singletonList(filme));
+    }
+
+    public Locacao alugarFilmes(Usuario usuario, List<Filme> filmes) {
 
         validarUsuario(usuario);
-        validarFilme(filme);
+        filmes.forEach(this::validarFilme);
 
         Locacao locacao = new Locacao();
-        locacao.setFilme(filme);
+        locacao.setFilmes(filmes);
         locacao.setUsuario(usuario);
         locacao.setDataLocacao(new Date());
 
@@ -27,7 +33,7 @@ public class LocacaoService {
         int diasAluguel = 1;
         dataEntrega = adicionarDias(dataEntrega, diasAluguel);
         locacao.setDataRetorno(dataEntrega);
-        locacao.setValor(filme.getPrecoLocacao() * diasAluguel);
+        locacao.setValor(filmes.stream().mapToDouble(Filme::getPrecoLocacao).sum() * diasAluguel);
 
         //Salvando a locacao...
         //TODO adicionar método para salvar
