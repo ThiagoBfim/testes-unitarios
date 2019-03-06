@@ -11,10 +11,8 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import static br.teste.basico.utils.DataUtils.adicionarDias;
 import static br.teste.basico.utils.DataUtils.isMesmaDataSimples;
@@ -89,70 +87,11 @@ public class LocacaoServiceTest {
         assertThat(locacao.getValor(), org.hamcrest.CoreMatchers.is(10.50));
         assertThat(locacao.getValor(), is(not(10.501)));
     }
-
-    @Test
-    public void deveHaverDesconto25PctNo3Filme() {
-        Filme filmeMulherMaravilha = createFilmeMulherMaravilha();
-        Filme filmeSuperman = createFilmeSuperman();
-        Locacao locacao = locacaoService.alugarFilmes(new Usuario("jose"), Arrays.asList(filmeBatman, filmeMulherMaravilha, filmeSuperman), 1);
-        double desconto = filmeSuperman.getPrecoLocacao() * 25 / 100;
-        assertEquals(locacao.getDesconto(), desconto, 0.1);
-        assertThat(locacao.getValor(), is(filmeBatman.getPrecoLocacao() + filmeMulherMaravilha.getPrecoLocacao() + filmeSuperman.getPrecoLocacao() - desconto));
-    }
-
-    @Test
-    public void deveHaverDesconto50PctNo4Filme() {
-        Filme filmeFlash = createFilmeFlash();
-        Filme filmeMulherMaravilha = createFilmeMulherMaravilha();
-        Filme filmeSuperman = createFilmeSuperman();
-        List<Filme> filmes = Arrays.asList(filmeBatman, filmeMulherMaravilha, filmeSuperman, filmeFlash);
-        Locacao locacao = locacaoService.alugarFilmes(new Usuario("jose"), filmes, 1);
-        double desconto = filmeFlash.getPrecoLocacao() * 50 / 100;
-        assertEquals(locacao.getDesconto(), desconto, 0.1);
-        assertThat(locacao.getValor(), is(filmeBatman.getPrecoLocacao() + filmeMulherMaravilha.getPrecoLocacao()
-                + filmeSuperman.getPrecoLocacao() + filmeFlash.getPrecoLocacao() - desconto));
-    }
-
-    @Test
-    public void deveHaverDesconto75PctNo5Filme() {
-        Filme filmeAquaman = createFilmeAquaman();
-        Filme filmeFlash = createFilmeFlash();
-        Filme filmeMulherMaravilha = createFilmeMulherMaravilha();
-        Filme filmeSuperman = createFilmeSuperman();
-        List<Filme> filmes = Arrays.asList(filmeBatman, filmeMulherMaravilha, filmeSuperman, filmeFlash, filmeAquaman);
-        Locacao locacao = locacaoService.alugarFilmes(new Usuario("jose"), filmes, 1);
-        double desconto = filmeAquaman.getPrecoLocacao() * 75 / 100;
-        assertEquals(locacao.getDesconto(), desconto, 0.1);
-        assertThat(locacao.getValor(), is(filmes.stream().mapToDouble(Filme::getPrecoLocacao).sum() - desconto));
-    }
-
-    @Test
-    public void deveHaverDesconto100PctNo6Filme() {
-        Filme filmeAquaman = createFilmeAquaman();
-        Filme filmeFlash = createFilmeFlash();
-        Filme filmeMulherMaravilha = createFilmeMulherMaravilha();
-        Filme filmeSuperman = createFilmeSuperman();
-        Filme filmeLigaJustica = createFilmeLigaJustica();
-        List<Filme> filmes = Arrays.asList(filmeBatman, filmeMulherMaravilha, filmeSuperman, filmeFlash, filmeAquaman, filmeLigaJustica);
-        Locacao locacao = locacaoService.alugarFilmes(new Usuario("jose"), filmes, 1);
-        double desconto = filmeLigaJustica.getPrecoLocacao() * 100 / 100;
-        assertEquals(locacao.getDesconto(), desconto, 0.1);
-        assertThat(locacao.getValor(), is(filmes.stream().mapToDouble(Filme::getPrecoLocacao).sum() - desconto));
-    }
-
     @Test
     public void naoDeveDevolverFilmeNoDomingo() {
         Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.WEDNESDAY));
         Locacao locacao = locacaoService.alugarFilme(new Usuario("jose"), filmeBatman, 4);
         assertTrue(isMesmaDataSimples(locacao.getDataRetorno(), adicionarDias(new Date(), 5)));
-    }
-
-    private Filme createFilmeLigaJustica() {
-        Filme filme = new Filme();
-        filme.setEstoque(2);
-        filme.setNome("Liga da Justica");
-        filme.setPrecoLocacao(30.0);
-        return filme;
     }
 
     private Filme createFilmeBatman() {
@@ -163,35 +102,4 @@ public class LocacaoServiceTest {
         return filme;
     }
 
-    private Filme createFilmeSuperman() {
-        Filme filme = new Filme();
-        filme.setEstoque(2);
-        filme.setNome("Superman");
-        filme.setPrecoLocacao(10.50);
-        return filme;
-    }
-
-    private Filme createFilmeFlash() {
-        Filme filme = new Filme();
-        filme.setEstoque(2);
-        filme.setNome("Flash");
-        filme.setPrecoLocacao(15.00);
-        return filme;
-    }
-
-    private Filme createFilmeAquaman() {
-        Filme filme = new Filme();
-        filme.setEstoque(2);
-        filme.setNome("Aquaman");
-        filme.setPrecoLocacao(5.00);
-        return filme;
-    }
-
-    private Filme createFilmeMulherMaravilha() {
-        Filme filme = new Filme();
-        filme.setEstoque(2);
-        filme.setNome("Mulher Maravilha");
-        filme.setPrecoLocacao(10.00);
-        return filme;
-    }
 }
