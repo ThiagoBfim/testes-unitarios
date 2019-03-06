@@ -43,7 +43,7 @@ public class LocacaoServiceTest {
 
     @Test
     public void deveAlugarPorUmDia() {
-        Assume.assumeTrue(DataUtils.isSabado(new Date()));
+        Assume.assumeTrue(!DataUtils.isSabado(new Date()));
         Locacao locacao = locacaoService.alugarFilme(new Usuario("jose"), filmeBatman);
         assertThat(locacao.getDataRetorno(), ehHojeMaisDias(1));
     }
