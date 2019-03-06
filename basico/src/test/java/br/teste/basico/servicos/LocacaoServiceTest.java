@@ -5,11 +5,14 @@ import br.teste.basico.entidades.Locacao;
 import br.teste.basico.entidades.Usuario;
 import br.teste.basico.exceptions.FaltaEstoqueException;
 import br.teste.basico.exceptions.LocadoraException;
+import br.teste.basico.utils.DataUtils;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class LocacaoServiceTest {
      * Repeatable		        (Retornar o mesmo resultado indepdentemente de quantas vezes for executado)
      * Self-verifying	        (O teste precisa se auto avaliar, e informar se houver erro ou não)
      * Timely			        (Deve ser criada no momento certo.)
-     *
+     * <p>
      * Note: Boas praticas: Utilizar should ou shouldNot nos nomes dos metodos
      */
     @Before
@@ -42,10 +45,11 @@ public class LocacaoServiceTest {
 
     @Test
     public void deveAlugarPorUmDia() {
+        Assume.assumeTrue(DataUtils.isSabado(new Date()));
         Locacao locacao = locacaoService.alugarFilme(new Usuario("jose"), filmeBatman);
         assertTrue(isMesmaDataSimples(locacao.getDataRetorno(), adicionarDias(new Date(), 1)));
-        assertTrue(isMesmaDataSimples(locacao.getDataLocacao(), new Date()));
     }
+
     @Test
     public void deveRealizarLocacaoNoMesmoDia() {
         Locacao locacao = locacaoService.alugarFilme(new Usuario("jose"), filmeBatman);
@@ -90,8 +94,8 @@ public class LocacaoServiceTest {
     public void deveHaverDesconto25PctNo3Filme() {
         Filme filmeMulherMaravilha = createFilmeMulherMaravilha();
         Filme filmeSuperman = createFilmeSuperman();
-        Locacao locacao = locacaoService.alugarFilmes(new Usuario("jose"), Arrays.asList(filmeBatman, filmeMulherMaravilha, filmeSuperman));
-        double desconto = filmeSuperman.getPrecoLocacao() * 25 /100;
+        Locacao locacao = locacaoService.alugarFilmes(new Usuario("jose"), Arrays.asList(filmeBatman, filmeMulherMaravilha, filmeSuperman), 1);
+        double desconto = filmeSuperman.getPrecoLocacao() * 25 / 100;
         assertEquals(locacao.getDesconto(), desconto, 0.1);
         assertThat(locacao.getValor(), is(filmeBatman.getPrecoLocacao() + filmeMulherMaravilha.getPrecoLocacao() + filmeSuperman.getPrecoLocacao() - desconto));
     }
@@ -102,10 +106,11 @@ public class LocacaoServiceTest {
         Filme filmeMulherMaravilha = createFilmeMulherMaravilha();
         Filme filmeSuperman = createFilmeSuperman();
         List<Filme> filmes = Arrays.asList(filmeBatman, filmeMulherMaravilha, filmeSuperman, filmeFlash);
-        Locacao locacao = locacaoService.alugarFilmes(new Usuario("jose"), filmes);
-        double desconto = filmeFlash.getPrecoLocacao() * 50 /100;
+        Locacao locacao = locacaoService.alugarFilmes(new Usuario("jose"), filmes, 1);
+        double desconto = filmeFlash.getPrecoLocacao() * 50 / 100;
         assertEquals(locacao.getDesconto(), desconto, 0.1);
-        assertThat(locacao.getValor(), is(filmeBatman.getPrecoLocacao() + filmeMulherMaravilha.getPrecoLocacao() + filmeSuperman.getPrecoLocacao() + filmeFlash.getPrecoLocacao() - desconto));
+        assertThat(locacao.getValor(), is(filmeBatman.getPrecoLocacao() + filmeMulherMaravilha.getPrecoLocacao()
+                + filmeSuperman.getPrecoLocacao() + filmeFlash.getPrecoLocacao() - desconto));
     }
 
     @Test
@@ -115,8 +120,8 @@ public class LocacaoServiceTest {
         Filme filmeMulherMaravilha = createFilmeMulherMaravilha();
         Filme filmeSuperman = createFilmeSuperman();
         List<Filme> filmes = Arrays.asList(filmeBatman, filmeMulherMaravilha, filmeSuperman, filmeFlash, filmeAquaman);
-        Locacao locacao = locacaoService.alugarFilmes(new Usuario("jose"), filmes);
-        double desconto = filmeAquaman.getPrecoLocacao() * 75 /100;
+        Locacao locacao = locacaoService.alugarFilmes(new Usuario("jose"), filmes, 1);
+        double desconto = filmeAquaman.getPrecoLocacao() * 75 / 100;
         assertEquals(locacao.getDesconto(), desconto, 0.1);
         assertThat(locacao.getValor(), is(filmes.stream().mapToDouble(Filme::getPrecoLocacao).sum() - desconto));
     }
@@ -129,10 +134,17 @@ public class LocacaoServiceTest {
         Filme filmeSuperman = createFilmeSuperman();
         Filme filmeLigaJustica = createFilmeLigaJustica();
         List<Filme> filmes = Arrays.asList(filmeBatman, filmeMulherMaravilha, filmeSuperman, filmeFlash, filmeAquaman, filmeLigaJustica);
-        Locacao locacao = locacaoService.alugarFilmes(new Usuario("jose"), filmes);
-        double desconto = filmeLigaJustica.getPrecoLocacao() * 100/100;
+        Locacao locacao = locacaoService.alugarFilmes(new Usuario("jose"), filmes, 1);
+        double desconto = filmeLigaJustica.getPrecoLocacao() * 100 / 100;
         assertEquals(locacao.getDesconto(), desconto, 0.1);
         assertThat(locacao.getValor(), is(filmes.stream().mapToDouble(Filme::getPrecoLocacao).sum() - desconto));
+    }
+
+    @Test
+    public void naoDeveDevolverFilmeNoDomingo() {
+        Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.WEDNESDAY));
+        Locacao locacao = locacaoService.alugarFilme(new Usuario("jose"), filmeBatman, 4);
+        assertTrue(isMesmaDataSimples(locacao.getDataRetorno(), adicionarDias(new Date(), 5)));
     }
 
     private Filme createFilmeLigaJustica() {

@@ -15,10 +15,14 @@ import static br.teste.basico.utils.DataUtils.adicionarDias;
 public class LocacaoService {
 
     public Locacao alugarFilme(Usuario usuario, Filme filme) {
-        return alugarFilmes(usuario, Collections.singletonList(filme));
+        return alugarFilmes(usuario, Collections.singletonList(filme), 1);
     }
 
-    public Locacao alugarFilmes(Usuario usuario, List<Filme> filmes) {
+    public Locacao alugarFilme(Usuario usuario, Filme filme, int diasAluguel) {
+        return alugarFilmes(usuario, Collections.singletonList(filme), diasAluguel);
+    }
+
+    public Locacao alugarFilmes(Usuario usuario, List<Filme> filmes, int diasAluguel) {
 
         validarUsuario(usuario);
         filmes.forEach(this::validarFilme);
@@ -30,7 +34,6 @@ public class LocacaoService {
 
         //Entrega no dia seguinte
         Date dataEntrega = new Date();
-        int diasAluguel = 1;
         dataEntrega = adicionarDias(dataEntrega, diasAluguel);
         locacao.setDataRetorno(dataEntrega);
         locacao.setValor(filmes.stream().mapToDouble(Filme::getPrecoLocacao).sum() * diasAluguel);

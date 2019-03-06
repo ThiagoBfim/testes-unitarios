@@ -1,5 +1,7 @@
 package br.teste.basico.entidades;
 
+import br.teste.basico.utils.DataUtils;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +35,11 @@ public class Locacao {
     }
 
     public void setDataRetorno(Date dataRetorno) {
-        this.dataRetorno = dataRetorno;
+        if(DataUtils.isDomingo(dataRetorno)) {
+            this.dataRetorno = DataUtils.adicionarDias(dataRetorno, 1);
+        } else {
+            this.dataRetorno = dataRetorno;
+        }
     }
 
     public Double getValor() {
