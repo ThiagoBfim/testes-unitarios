@@ -14,12 +14,11 @@ import org.junit.Test;
 import java.util.Calendar;
 import java.util.Date;
 
-import static br.teste.basico.matchers.MatchersService.caiEmUmaSegunda;
-import static br.teste.basico.utils.DataUtils.adicionarDias;
-import static br.teste.basico.utils.DataUtils.isMesmaDataSimples;
+import static br.teste.basico.matchers.MatchersService.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class LocacaoServiceTest {
 
@@ -46,13 +45,13 @@ public class LocacaoServiceTest {
     public void deveAlugarPorUmDia() {
         Assume.assumeTrue(DataUtils.isSabado(new Date()));
         Locacao locacao = locacaoService.alugarFilme(new Usuario("jose"), filmeBatman);
-        assertTrue(isMesmaDataSimples(locacao.getDataRetorno(), adicionarDias(new Date(), 1)));
+        assertThat(locacao.getDataRetorno(), ehHojeMaisDias(1));
     }
 
     @Test
     public void deveRealizarLocacaoNoMesmoDia() {
         Locacao locacao = locacaoService.alugarFilme(new Usuario("jose"), filmeBatman);
-        assertTrue(isMesmaDataSimples(locacao.getDataLocacao(), new Date()));
+        assertThat(locacao.getDataLocacao(), ehHoje());
     }
 
     @Test(expected = FaltaEstoqueException.class)

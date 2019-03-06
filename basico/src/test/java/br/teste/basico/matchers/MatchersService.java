@@ -11,4 +11,12 @@ public class MatchersService {
     public static DiaSemanaMatcher caiEmUmaSegunda(){
         return new DiaSemanaMatcher(Calendar.MONDAY);
     }
+
+    public static SomaDiasMatcher ehHojeMaisDias(Integer dias){
+        return new SomaDiasMatcher(dias);
+    }
+
+    public static SomaDiasMatcher ehHoje(){
+        return new SomaDiasMatcher(0);
+    }
 }
