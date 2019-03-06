@@ -14,6 +14,7 @@ import org.junit.Test;
 import java.util.Calendar;
 import java.util.Date;
 
+import static br.teste.basico.matchers.MatchersService.caiEmUmaSegunda;
 import static br.teste.basico.utils.DataUtils.adicionarDias;
 import static br.teste.basico.utils.DataUtils.isMesmaDataSimples;
 import static org.hamcrest.CoreMatchers.is;
@@ -87,11 +88,12 @@ public class LocacaoServiceTest {
         assertThat(locacao.getValor(), org.hamcrest.CoreMatchers.is(10.50));
         assertThat(locacao.getValor(), is(not(10.501)));
     }
+
     @Test
-    public void naoDeveDevolverFilmeNoDomingo() {
+    public void deveDevolverFilmeEmSegundaQuandoCairEmDomingo() {
         Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.WEDNESDAY));
         Locacao locacao = locacaoService.alugarFilme(new Usuario("jose"), filmeBatman, 4);
-        assertTrue(isMesmaDataSimples(locacao.getDataRetorno(), adicionarDias(new Date(), 5)));
+        assertThat(locacao.getDataRetorno(), caiEmUmaSegunda());
     }
 
     private Filme createFilmeBatman() {

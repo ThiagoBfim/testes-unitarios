@@ -2,6 +2,7 @@ package br.teste.basico.utils;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import static java.util.Calendar.*;
 
@@ -86,5 +87,11 @@ public class DataUtils {
 
     public static boolean isSabado(Date date) {
         return verificarDiaSemana(date, Calendar.SATURDAY);
+    }
+
+    public static String getDiaSemanaExtenso(Integer diaSemana) {
+        Calendar calendar = getInstance();
+        calendar.set(DAY_OF_WEEK, diaSemana);
+        return calendar.getDisplayName(DAY_OF_WEEK, LONG, new Locale("pt", "BR"));
     }
 }
