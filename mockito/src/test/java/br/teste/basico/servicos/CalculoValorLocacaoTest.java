@@ -30,7 +30,9 @@ public class CalculoValorLocacaoTest {
 
     public CalculoValorLocacaoTest(List<Filme> filmes, Double valorDesconto) {
         LocacaoRepository locacaoRepository = Mockito.mock(LocacaoRepository.class);
-        locacaoService = new LocacaoService(locacaoRepository);
+        SPCService spcService = Mockito.mock(SPCService.class);
+        Mockito.when(spcService.possuiNomeLimpo(Mockito.any())).thenReturn(true);
+        locacaoService = new LocacaoService(locacaoRepository, spcService);
         this.filmes = filmes;
         this.valorDesconto = valorDesconto;
     }

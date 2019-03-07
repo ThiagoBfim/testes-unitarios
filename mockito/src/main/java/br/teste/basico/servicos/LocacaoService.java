@@ -16,9 +16,11 @@ import static br.teste.basico.utils.DataUtils.adicionarDias;
 public class LocacaoService {
 
     private LocacaoRepository locacaoRepository;
+    private SPCService spcService;
 
-    public LocacaoService(LocacaoRepository locacaoRepository) {
+    public LocacaoService(LocacaoRepository locacaoRepository, SPCService spcService) {
         this.locacaoRepository = locacaoRepository;
+        this.spcService = spcService;
     }
 
     public Locacao alugarFilme(Usuario usuario, Filme filme) {
@@ -33,6 +35,10 @@ public class LocacaoService {
 
         validarUsuario(usuario);
         filmes.forEach(this::validarFilme);
+
+        if (!spcService.possuiNomeLimpo(usuario)) {
+            throw new LocadoraException("Usuario Negativado");
+        }
 
         Locacao locacao = new Locacao();
         locacao.setFilmes(filmes);

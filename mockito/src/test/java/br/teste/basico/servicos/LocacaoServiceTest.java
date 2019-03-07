@@ -27,6 +27,7 @@ public class LocacaoServiceTest {
 
     private LocacaoService locacaoService;
     private Filme filmeBatman;
+    private SPCService spcService;
 
     /**
      * O teste precisa ser FIRST
@@ -41,7 +42,9 @@ public class LocacaoServiceTest {
     @Before
     public void setUp() {
         LocacaoRepository locacaoRepository = Mockito.mock(LocacaoRepository.class);
-        locacaoService = new LocacaoService(locacaoRepository);
+        spcService = Mockito.mock(SPCService.class);
+        Mockito.when(spcService.possuiNomeLimpo(Mockito.any())).thenReturn(true);
+        locacaoService = new LocacaoService(locacaoRepository, spcService);
         filmeBatman = createFilmeBatman();
     }
 
@@ -68,9 +71,20 @@ public class LocacaoServiceTest {
     public void naoDeveAlugarFilmeSemFilme() {
         try {
             locacaoService.alugarFilme(new Usuario("jose"), null);
-            Assert.fail("É esperado exception quando não houver filmeBatman.");
+            Assert.fail("É esperado exception quando não houver filmeB.");
         } catch (LocadoraException e) {
             assertThat(e.getMessage(), is("Filme vazio"));
+        }
+    }
+
+    @Test
+    public void naoDeveAlugarFilmeCasoNomeEstejaSujo() {
+        Mockito.when(spcService.possuiNomeLimpo(Mockito.any())).thenReturn(false);
+        try {
+            locacaoService.alugarFilme(new Usuario("jose"), filmeBatman);
+            Assert.fail("É esperado exception quando usuário estiver com nome sujo.");
+        } catch (LocadoraException e) {
+            assertThat(e.getMessage(), is("Usuario Negativado"));
         }
     }
 
