@@ -119,6 +119,7 @@ public class LocacaoServiceTest {
         } catch (LocadoraException e) {
             assertThat(e.getMessage(), is("Usuario Negativado"));
         }
+        Mockito.verify(spcService, Mockito.times(1)).possuiNomeLimpo(Mockito.any());
     }
 
     @Test
