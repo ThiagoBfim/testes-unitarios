@@ -17,7 +17,7 @@ import static br.teste.basico.utils.DataUtils.adicionarDias;
 public class LocacaoService {
 
     private LocacaoRepository locacaoRepository;
-    private ISPCService spcService;
+    private SPCService spcService;
     private IEmailService emailService;
 
     public Locacao alugarFilme(Usuario usuario, Filme filme) {

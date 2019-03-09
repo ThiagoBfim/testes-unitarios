@@ -26,7 +26,7 @@ public class LocacaoServiceTest {
     private LocacaoService locacaoService;
 
     @Mock
-    private ISPCService spcService;
+    private SPCService spcService;
     @Mock
     private IEmailService emailService;
     @Mock

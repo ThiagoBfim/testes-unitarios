@@ -34,7 +34,7 @@ public class CalculoValorLocacaoTest {
     private LocacaoService locacaoService;
 
     @Mock
-    private ISPCService spcService;
+    private SPCService spcService;
     @Mock
     private IEmailService emailService;
     @Mock
