@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 public class Usuario {
 
 	private String nome;
+	private String email;
 	private BigDecimal saldo = BigDecimal.ZERO;
 	
 	public Usuario() {}
@@ -12,6 +13,14 @@ public class Usuario {
 	public Usuario(String nome, BigDecimal saldo) {
 		this.nome = nome;
 		this.saldo = saldo;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public Usuario(String nome) {

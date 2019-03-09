@@ -7,9 +7,9 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
-public class SPCServiceTest {
+public class ISPCServiceTest {
 
-    private SPCService spcService;
+    private ISPCService spcService;
 
     @Before
     public void setUp() throws Exception {

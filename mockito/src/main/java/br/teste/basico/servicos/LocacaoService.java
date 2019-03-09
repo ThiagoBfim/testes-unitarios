@@ -16,11 +16,13 @@ import static br.teste.basico.utils.DataUtils.adicionarDias;
 public class LocacaoService {
 
     private LocacaoRepository locacaoRepository;
-    private SPCService spcService;
+    private ISPCService spcService;
+    private IEmailService emailService;
 
-    public LocacaoService(LocacaoRepository locacaoRepository, SPCService spcService) {
+    public LocacaoService(LocacaoRepository locacaoRepository, ISPCService spcService, IEmailService emailService) {
         this.locacaoRepository = locacaoRepository;
         this.spcService = spcService;
+        this.emailService = emailService;
     }
 
     public Locacao alugarFilme(Usuario usuario, Filme filme) {
@@ -57,6 +59,18 @@ public class LocacaoService {
 
         return locacao;
     }
+
+    public void notificarAtrasos(){
+        List<Locacao> locacaos = locacaoRepository.obterLocacoesPendentes();
+        locacaos.stream()
+                .filter(this::isDataLocacaoAtrasada)
+                .forEach(l -> emailService.enviarEmail(l.getUsuario().getEmail()));
+    }
+
+    private boolean isDataLocacaoAtrasada(Locacao locacao) {
+        return locacao.getDataRetorno().before(new Date());
+    }
+
 
     private void validarUsuario(Usuario usuario) {
         if (usuario == null) {

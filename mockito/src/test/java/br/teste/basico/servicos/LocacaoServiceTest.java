@@ -13,8 +13,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static br.teste.basico.matchers.MatchersService.*;
 import static org.hamcrest.CoreMatchers.is;
@@ -27,7 +29,9 @@ public class LocacaoServiceTest {
 
     private LocacaoService locacaoService;
     private Filme filmeBatman;
-    private SPCService spcService;
+    private ISPCService spcService;
+    private IEmailService emailService;
+    private LocacaoRepository locacaoRepository;
 
     /**
      * O teste precisa ser FIRST
@@ -41,11 +45,40 @@ public class LocacaoServiceTest {
      */
     @Before
     public void setUp() {
-        LocacaoRepository locacaoRepository = Mockito.mock(LocacaoRepository.class);
-        spcService = Mockito.mock(SPCService.class);
+        locacaoRepository = Mockito.mock(LocacaoRepository.class);
+        spcService = Mockito.mock(ISPCService.class);
+        emailService = Mockito.mock(IEmailService.class);
         Mockito.when(spcService.possuiNomeLimpo(Mockito.any())).thenReturn(true);
-        locacaoService = new LocacaoService(locacaoRepository, spcService);
+        locacaoService = new LocacaoService(locacaoRepository, spcService, emailService);
         filmeBatman = createFilmeBatman();
+    }
+
+    @Test
+    public void deveEnviarNotificacaoLocacoesAtrasadas() {
+        Mockito.when(emailService.enviarEmail(Mockito.any())).thenReturn(true);
+        locacaoService.notificarAtrasos();
+        List<Locacao> locacaoList = new ArrayList<>();
+        Locacao locacao = new Locacao();
+        locacao.setUsuario(new Usuario());
+        locacao.setDataRetorno(DataUtils.adicionarDias(new Date(), -1));
+        locacaoList.add(locacao);
+        Mockito.when(locacaoRepository.obterLocacoesPendentes()).thenReturn(locacaoList);
+        locacaoService.notificarAtrasos();
+        Mockito.verify(emailService, Mockito.times(1)).enviarEmail(Mockito.any());
+    }
+
+    @Test
+    public void naoDeveEnviarNotificacaoLocacoesAtrasadas() {
+        Mockito.when(emailService.enviarEmail(Mockito.any())).thenReturn(true);
+        locacaoService.notificarAtrasos();
+        List<Locacao> locacaoList = new ArrayList<>();
+        Locacao locacao = new Locacao();
+        locacao.setUsuario(new Usuario());
+        locacao.setDataRetorno(new Date());
+        locacaoList.add(locacao);
+        Mockito.when(locacaoRepository.obterLocacoesPendentes()).thenReturn(locacaoList);
+        locacaoService.notificarAtrasos();
+        Mockito.verify(emailService, Mockito.never()).enviarEmail(Mockito.any());
     }
 
     @Test
