@@ -42,4 +42,8 @@ public class Usuario {
 	public void setSaldo(BigDecimal saldo) {
 		this.saldo = saldo;
 	}
+
+	public boolean temSaldo() {
+		return getSaldo().compareTo(BigDecimal.ZERO) > 0;
+	}
 }
