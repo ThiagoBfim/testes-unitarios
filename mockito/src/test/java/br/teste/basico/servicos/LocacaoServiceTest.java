@@ -11,21 +11,14 @@ import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static br.teste.basico.matchers.MatchersService.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class LocacaoServiceTest {
 
@@ -150,6 +143,34 @@ public class LocacaoServiceTest {
         Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.WEDNESDAY));
         Locacao locacao = locacaoService.alugarFilme(new Usuario("jose"), filmeBatman, 4);
         assertThat(locacao.getDataRetorno(), caiEmUmaSegunda());
+    }
+
+    @Test
+    public void deveProrrogarLocacao(){
+        Locacao locacao = criandoLocacao();
+        Date dataRetornoBeforeProrrogacao = locacao.getDataRetorno();
+        Double valorAntesProrrogacao = locacao.getValor();
+
+        Mockito.when(locacaoRepository.findByCod(Mockito.eq(1L))).thenReturn(locacao);
+        locacaoService.prorrogarLocacao(1L, 5);
+
+        ArgumentCaptor<Locacao> argumentCaptor = ArgumentCaptor.forClass(Locacao.class);
+        Mockito.verify(locacaoRepository).salvar(argumentCaptor.capture());
+        Locacao locacaoRetornada = argumentCaptor.getValue();
+
+        assertEquals(valorAntesProrrogacao *5 , locacaoRetornada.getValor(), 0.1);
+        assertTrue(DataUtils.isMesmaDataSimples(locacaoRetornada.getDataRetorno(), DataUtils.adicionarDias(dataRetornoBeforeProrrogacao, 5)));
+
+    }
+
+    private Locacao criandoLocacao() {
+        Locacao locacao = new Locacao();
+        locacao.setValor(10.0);
+        locacao.setDataRetorno(new Date());
+        locacao.setDataLocacao(new Date());
+        locacao.setCodLocacao(1L);
+        locacao.setFilmes(Collections.singletonList(filmeBatman));
+        return locacao;
     }
 
     private Filme createFilmeBatman() {

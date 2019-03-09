@@ -10,4 +10,5 @@ public interface LocacaoRepository {
 
     List<Locacao> obterLocacoesPendentes();
 
+    Locacao findByCod(Long codLocacao);
 }

@@ -6,6 +6,7 @@ import br.teste.basico.entidades.Usuario;
 import br.teste.basico.exceptions.FaltaEstoqueException;
 import br.teste.basico.exceptions.LocadoraException;
 import br.teste.basico.repository.LocacaoRepository;
+import br.teste.basico.utils.DataUtils;
 
 import java.util.Collections;
 import java.util.Date;
@@ -83,5 +84,12 @@ public class LocacaoService {
         if (filme.getEstoque() == 0) {
             throw new FaltaEstoqueException(String.format("Filme %s sem estoque", filme.getNome()));
         }
+    }
+
+    public void prorrogarLocacao(Long codLocacao, int dias) {
+        Locacao locacao = locacaoRepository.findByCod(codLocacao);
+        locacao.setValor(locacao.getValor() * dias);
+        locacao.setDataRetorno(DataUtils.adicionarDias(locacao.getDataRetorno(), dias));
+        locacaoRepository.salvar(locacao);
     }
 }

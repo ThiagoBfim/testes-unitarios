@@ -8,11 +8,20 @@ import java.util.List;
 
 public class Locacao {
 
+    private Long codLocacao;
     private Usuario usuario;
     private List<Filme> filmes = new ArrayList<Filme>();
     private Date dataLocacao;
     private Date dataRetorno;
     private Double valor;
+
+    public Long getCodLocacao() {
+        return codLocacao;
+    }
+
+    public void setCodLocacao(Long codLocacao) {
+        this.codLocacao = codLocacao;
+    }
 
     public Usuario getUsuario() {
         return usuario;
