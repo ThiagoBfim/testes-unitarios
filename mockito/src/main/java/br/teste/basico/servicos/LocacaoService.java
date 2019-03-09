@@ -19,12 +19,6 @@ public class LocacaoService {
     private ISPCService spcService;
     private IEmailService emailService;
 
-    public LocacaoService(LocacaoRepository locacaoRepository, ISPCService spcService, IEmailService emailService) {
-        this.locacaoRepository = locacaoRepository;
-        this.spcService = spcService;
-        this.emailService = emailService;
-    }
-
     public Locacao alugarFilme(Usuario usuario, Filme filme) {
         return alugarFilmes(usuario, Collections.singletonList(filme), 1);
     }

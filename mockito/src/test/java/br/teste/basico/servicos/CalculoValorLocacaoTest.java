@@ -4,10 +4,14 @@ import br.teste.basico.entidades.Filme;
 import br.teste.basico.entidades.Locacao;
 import br.teste.basico.entidades.Usuario;
 import br.teste.basico.repository.LocacaoRepository;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,15 +30,24 @@ public class CalculoValorLocacaoTest {
 
     public Double valorDesconto;
 
+    @InjectMocks
     private LocacaoService locacaoService;
 
-    public CalculoValorLocacaoTest(List<Filme> filmes, Double valorDesconto) {
-        LocacaoRepository locacaoRepository = Mockito.mock(LocacaoRepository.class);
-        ISPCService spcService = Mockito.mock(ISPCService.class);
+    @Mock
+    private ISPCService spcService;
+    @Mock
+    private IEmailService emailService;
+    @Mock
+    private LocacaoRepository locacaoRepository;
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
         Mockito.when(spcService.possuiNomeLimpo(Mockito.any())).thenReturn(true);
-        IEmailService emailService =  Mockito.mock(IEmailService.class);
         Mockito.when(emailService.enviarEmail(Mockito.contains("@"))).thenReturn(true);
-        locacaoService = new LocacaoService(locacaoRepository, spcService,emailService );
+    }
+
+    public CalculoValorLocacaoTest(List<Filme> filmes, Double valorDesconto) {
         this.filmes = filmes;
         this.valorDesconto = valorDesconto;
     }

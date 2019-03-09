@@ -11,7 +11,10 @@ import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,12 +29,17 @@ import static org.junit.Assert.assertThat;
 
 public class LocacaoServiceTest {
 
-
+    @InjectMocks
     private LocacaoService locacaoService;
-    private Filme filmeBatman;
+
+    @Mock
     private ISPCService spcService;
+    @Mock
     private IEmailService emailService;
+    @Mock
     private LocacaoRepository locacaoRepository;
+
+    private Filme filmeBatman;
 
     /**
      * O teste precisa ser FIRST
@@ -45,11 +53,8 @@ public class LocacaoServiceTest {
      */
     @Before
     public void setUp() {
-        locacaoRepository = Mockito.mock(LocacaoRepository.class);
-        spcService = Mockito.mock(ISPCService.class);
-        emailService = Mockito.mock(IEmailService.class);
+        MockitoAnnotations.initMocks(this);
         Mockito.when(spcService.possuiNomeLimpo(Mockito.any())).thenReturn(true);
-        locacaoService = new LocacaoService(locacaoRepository, spcService, emailService);
         filmeBatman = createFilmeBatman();
     }
 
