@@ -81,7 +81,7 @@ public class LocacaoServiceTest {
         List<Locacao> locacaoList = new ArrayList<>();
         Locacao locacao = new Locacao();
         locacao.setUsuario(new Usuario());
-        locacao.setDataRetorno(new Date());
+        locacao.setDataRetorno(DataUtils.adicionarDias(new Date(), 1));
         locacaoList.add(locacao);
         Mockito.when(locacaoRepository.obterLocacoesPendentes()).thenReturn(locacaoList);
         locacaoService.notificarAtrasos();
@@ -161,20 +161,25 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void deveProrrogarLocacao(){
+    public void deveProrrogarLocacao() throws Exception {
         Locacao locacao = criandoLocacao();
         Date dataRetornoBeforeProrrogacao = locacao.getDataRetorno();
         Double valorAntesProrrogacao = locacao.getValor();
+        int diasAdicioandos = 7;
 
         Mockito.when(locacaoRepository.findByCod(Mockito.eq(1L))).thenReturn(locacao);
-        locacaoService.prorrogarLocacao(1L, 5);
+        locacaoService.prorrogarLocacao(1L, diasAdicioandos);
 
         ArgumentCaptor<Locacao> argumentCaptor = ArgumentCaptor.forClass(Locacao.class);
         Mockito.verify(locacaoRepository).salvar(argumentCaptor.capture());
         Locacao locacaoRetornada = argumentCaptor.getValue();
 
-        assertEquals(valorAntesProrrogacao *5 , locacaoRetornada.getValor(), 0.1);
-        assertTrue(DataUtils.isMesmaDataSimples(locacaoRetornada.getDataRetorno(), DataUtils.adicionarDias(dataRetornoBeforeProrrogacao, 5)));
+
+        if(DataUtils.isDomingo(new Date())){
+            diasAdicioandos++;
+        }
+        assertEquals(valorAntesProrrogacao *diasAdicioandos , locacaoRetornada.getValor(), 0.1);
+        assertTrue(DataUtils.isMesmaDataSimples(locacaoRetornada.getDataRetorno(), DataUtils.adicionarDias(dataRetornoBeforeProrrogacao, diasAdicioandos)));
 
     }
 
