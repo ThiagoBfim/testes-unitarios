@@ -8,6 +8,8 @@ import br.teste.basico.exceptions.LocadoraException;
 import br.teste.basico.repository.LocacaoRepository;
 import br.teste.basico.utils.DataUtils;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -63,7 +65,8 @@ public class LocacaoService {
     }
 
     private boolean isDataLocacaoAtrasada(Locacao locacao) {
-        return locacao.getDataRetorno().before(new Date());
+        Date dataAtual = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return locacao.getDataRetorno().before(dataAtual);
     }
 
 

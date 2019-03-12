@@ -75,13 +75,27 @@ public class LocacaoServiceTest {
     }
 
     @Test
-    public void naoDeveEnviarNotificacaoLocacoesAtrasadas() {
+    public void naoDeveEnviarNotificacaoLocacoesNaoAtrasadas() {
         Mockito.when(emailService.enviarEmail(Mockito.any())).thenReturn(true);
         locacaoService.notificarAtrasos();
         List<Locacao> locacaoList = new ArrayList<>();
         Locacao locacao = new Locacao();
         locacao.setUsuario(new Usuario());
         locacao.setDataRetorno(DataUtils.adicionarDias(new Date(), 1));
+        locacaoList.add(locacao);
+        Mockito.when(locacaoRepository.obterLocacoesPendentes()).thenReturn(locacaoList);
+        locacaoService.notificarAtrasos();
+        Mockito.verify(emailService, Mockito.never()).enviarEmail(Mockito.any());
+    }
+
+    @Test
+    public void naoDeveEnviarNotificacaoLocacoesDiaRetornoHoje() {
+        Mockito.when(emailService.enviarEmail(Mockito.any())).thenReturn(true);
+        locacaoService.notificarAtrasos();
+        List<Locacao> locacaoList = new ArrayList<>();
+        Locacao locacao = new Locacao();
+        locacao.setUsuario(new Usuario());
+        locacao.setDataRetorno(new Date());
         locacaoList.add(locacao);
         Mockito.when(locacaoRepository.obterLocacoesPendentes()).thenReturn(locacaoList);
         locacaoService.notificarAtrasos();
